@@ -50,6 +50,8 @@ typedef struct fstab_rec Volume;
 // fopen a file, mounting volumes and making parent dirs as necessary.
 FILE* fopen_path(const char *path, const char *mode);
 
+int property_get_bool(const char *name, int def);
+
 //void ui_print(const char* format, ...);
 
 #ifdef __cplusplus

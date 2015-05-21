@@ -379,14 +379,13 @@ static int vk_tp_to_screen(struct position *p, int *x, int *y)
     printf("EV: p->x=%d  x-range=%d,%d  fb-width=%d\n", p->x, p->xi.minimum, p->xi.maximum, gr_fb_width());
 #endif
 
-#ifndef RECOVERY_TOUCHSCREEN_SWAP_XY
-    int fb_width = gr_fb_width();
-    int fb_height = gr_fb_height();
-#else
-    // We need to swap the scaling sizes, too
-    int fb_width = gr_fb_height();
-    int fb_height = gr_fb_width();
-#endif
+	int fb_width = gr_fb_width();
+	int fb_height = gr_fb_height();
+	if(property_get_bool("twrp.touchscreen.swap_xy", 0)) {
+		// We need to swap the scaling sizes, too
+		fb_width = gr_fb_height();
+		fb_height = gr_fb_width();
+	}
 
     *x = (p->x - p->xi.minimum) * (fb_width - 1) / (p->xi.maximum - p->xi.minimum);
     *y = (p->y - p->yi.minimum) * (fb_height - 1) / (p->yi.maximum - p->yi.minimum);
@@ -653,17 +652,15 @@ static int vk_modify(struct ev *e, struct input_event *ev)
         return 1;
     }
 
-#ifdef RECOVERY_TOUCHSCREEN_SWAP_XY
-    x ^= y;
-    y ^= x;
-    x ^= y;
-#endif
-#ifdef RECOVERY_TOUCHSCREEN_FLIP_X
-    x = gr_fb_width() - x;
-#endif
-#ifdef RECOVERY_TOUCHSCREEN_FLIP_Y
-    y = gr_fb_height() - y;
-#endif
+	if(property_get_bool("twrp.touchscreen.swap_xy", 0)) {
+		x ^= y;
+		y ^= x;
+		x ^= y;
+	}
+	if(property_get_bool("twrp.touchscreen.flip_x", 0))
+	    x = gr_fb_width() - x;
+	if(property_get_bool("twrp.touchscreen.flip_y", 0))
+	    y = gr_fb_height() - y;
 
 #ifdef _EVENT_LOGGING
     printf("EV: x: %d  y: %d\n", x, y);

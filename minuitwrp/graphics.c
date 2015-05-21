@@ -273,9 +273,8 @@ static int get_framebuffer(GGLSurface *fb)
         printf("Using qualcomm overlay\n");
     }
 
-#ifdef RECOVERY_GRAPHICS_USE_LINELENGTH
-    vi.xres_virtual = fi.line_length / PIXEL_SIZE;
-#endif
+	if(property_get_bool("twrp.linelength", 0))
+	    vi.xres_virtual = fi.line_length / PIXEL_SIZE;
 
     fb->version = sizeof(*fb);
     fb->width = vi.xres;
