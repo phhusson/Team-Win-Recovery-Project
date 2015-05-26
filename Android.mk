@@ -14,6 +14,8 @@
 
 LOCAL_PATH := $(call my-dir)
 
+TW_TARGET_USES_QCOM_BSP := true
+
 ifdef project-path-for
     ifeq ($(LOCAL_PATH),$(call project-path-for,recovery))
         PROJECT_PATH_AGREES := true

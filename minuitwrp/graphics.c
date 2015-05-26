@@ -252,14 +252,14 @@ static int get_framebuffer(GGLSurface *fb)
         return -1;
     }
 
-#ifdef MSM_BSP
-    has_overlay = target_has_overlay(fi.id);
+	if(property_get_bool("twrp.msm_overlay", 0)) {
+		has_overlay = target_has_overlay(fi.id);
 
-    if (isTargetMdp5())
-        setDisplaySplit();
-#else
-    has_overlay = false;
-#endif
+		if (isTargetMdp5())
+			setDisplaySplit();
+	} else {
+	    has_overlay = false;
+	}
 
     if (!has_overlay) {
         printf("Not using qualcomm overlay, '%s'\n", fi.id);
@@ -296,6 +296,10 @@ static int get_framebuffer(GGLSurface *fb)
     /* check if we can use double buffering */
     if (vi.yres * fi.line_length * 2 > fi.smem_len)
         return fd;
+
+	if(property_get_bool("twrp.singlebuffering", 0)) {
+		return fd;
+	}
 
     double_buffering = 1;
 
